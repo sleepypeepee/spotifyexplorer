@@ -2,6 +2,10 @@
 
 A browser-based app to allow the user to search for Spotify artists and view their albums, created using Vue.js.
 
+## Live Demo
+
+[Demo (robmarriott.com/spotifyexplorer)](http://www.robmarriott.com/spotifyexplorer)
+
 ## Project setup
 
 Using Yarn:
