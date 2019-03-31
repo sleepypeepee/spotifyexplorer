@@ -4,14 +4,14 @@
       <v-flex xs12>
 
         <v-card v-if="album">
-          <v-card-title class="display-2 font-weight-black ">{{album.name}}</v-card-title>
           <v-container>
             <v-layout row wrap>
-              <v-flex xs12 sm3 pr-4>
+              <v-flex xs6 sm4 md3 pr-4>
                <v-img :src="album.images[0].url" style="width: 100%;" aspect-ratio="1" class="grey lighten-2"></v-img>
               </v-flex>
 
-              <v-flex sx12 sm9>
+              <v-flex sx6 sm8 md9>
+                <h1 class="display-2 font-weight-black ">{{album.name}}</h1>
                 <router-link :to="{ name: 'artistdetails', params: { id: album.artists[0].id } }" class="link-green">
                   <h2>{{album.artists[0].name}}</h2>
                 </router-link>
@@ -29,7 +29,7 @@
               <v-layout row wrap>
                 <v-flex xs12>
                   <v-list two-line>
-                    <a v-for="track in tracks.items" v-bind:href="track.href" class="link-green" title="Play Track">
+                    <a v-for="track in tracks.items" v-bind:href="track.href" :key="track.id" class="link-green" title="Play Track">
                       <v-list-tile avatar class="list-item">
                         <v-list-tile-action>
                           <v-icon color="green">play_circle_filled</v-icon>

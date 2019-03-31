@@ -3,6 +3,7 @@ import store from './store'
 import router from './router'
 import './plugins/vuetify'
 import moment from 'moment'
+import Vue2Filters from 'vue2-filters'
 import App from './App.vue'
 
 Vue.config.productionTip = false
@@ -17,6 +18,8 @@ Vue.filter('formatDateToYear', function(value) {
    return moment(value).format('YYYY')
   }
 })
+
+Vue.use(Vue2Filters)
 
 new Vue({
   store,

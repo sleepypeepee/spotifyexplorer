@@ -1,27 +1,30 @@
 <template>
   <v-app dark>
-    <v-toolbar app>
-      <router-link to="/" class="link-green">
-        <v-toolbar-title class="headline text-uppercase">
-            <span>Spotify</span>
-            <span class="font-weight-light">Explorer</span>
-        </v-toolbar-title>
-      </router-link>
-      <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Logout</span>
-      </v-btn>
-    </v-toolbar>
+    <div v-if="authorised">
 
-    <v-content>
-      <transition name="fade" mode="out-in">
-        <router-view/>
-      </transition>
-    </v-content>
+      <v-toolbar app>
+        <router-link to="/" class="link-green">
+          <v-toolbar-title class="headline text-uppercase">
+              <span>Spotify</span>
+              <span class="font-weight-light">Explorer</span>
+          </v-toolbar-title>
+        </router-link>
+        <v-spacer></v-spacer>
+        <v-btn
+          flat
+          v-on:click.native="logout"
+        >
+          <span class="mr-2">Logout</span>
+        </v-btn>
+      </v-toolbar>
+
+      <v-content>
+        <transition name="fade" mode="out-in">
+          <router-view/>
+        </transition>
+      </v-content>
+
+    </div>
   </v-app>
 </template>
 
@@ -77,6 +80,11 @@ export default {
 
       }
     },
+    logout() {
+      this.$store.dispatch('removeToken')
+      // TODO: Return promose from store when removing token, then authorise()
+      this.authorise()
+    }
   },
   mounted() {
     this.authorise()

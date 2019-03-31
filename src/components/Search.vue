@@ -38,7 +38,7 @@
                     </v-subheader>
                     <v-divider></v-divider>
 
-                    <router-link v-for="artist in artists" :to="{ name: 'artistdetails', params: { id: artist.id } }" class="link-green">
+                    <router-link v-for="artist in artists" :key="artist.id" :to="{ name: 'artistdetails', params: { id: artist.id } }" class="link-green">
                       <v-list-tile avatar class="list-item">
                         <v-list-tile-avatar v-if="artist.images.length > 0">
                           <img :src="artist.images[0].url">

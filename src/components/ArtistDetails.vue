@@ -4,14 +4,14 @@
       <v-flex xs12>
 
         <v-card v-if="artist">
-          <v-card-title class="display-2 font-weight-black ">{{artist.name}}</v-card-title>
           <v-container>
             <v-layout row wrap>
-              <v-flex xs12 sm3 pr-4>
+              <v-flex xs6 sm4 md3 pr-4>
                <v-img :src="artist.images[0].url" style="width: 100%;" aspect-ratio="1" class="grey lighten-2"></v-img>
               </v-flex>
 
-              <v-flex sx12 sm9>
+              <v-flex sx6 sm8 md9>
+                <h1 class="display-2 font-weight-black ">{{artist.name}}</h1>
                 <div v-if="albums !== undefined">
                   <h2>{{albums.items.length}} Albums</h2>
                 </div>
@@ -26,7 +26,7 @@
           <v-card-title class="headline font-weight-regular">Albums</v-card-title>
           <v-container grid-list-sm fluid>
             <v-layout row wrap v-if="albums">
-              <v-flex v-for="album in albums.items" :key="album.id" xs12 sm6 md3 d-flex pa-2 pb-4>
+              <v-flex v-for="album in orderBy(albums.items, 'release_date', -1)" :key="album.id" xs6 sm4 md2 d-flex pa-2 pb-4>
 
                 <v-card flat tile class="d-flex">
                   <router-link :to="{ name: 'albumdetails', params: { id: album.id } }" class="link-green">
@@ -56,8 +56,11 @@
 </template>
 
 <script>
+import Vue2Filters from 'vue2-filters'
+
 export default {
   name: 'ArtistDetails',
+  mixins: [Vue2Filters.mixin],
   computed: {
     artist() {
       return this.$store.getters.ARTIST_DETAILS
