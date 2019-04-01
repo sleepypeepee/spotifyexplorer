@@ -10,7 +10,7 @@ export default new Vuex.Store({
     token: null,
     artists: [],
     artist: null,
-    albums: [],
+    albums: null,
     album: null,
     tracks: null
   },

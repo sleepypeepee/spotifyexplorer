@@ -8,12 +8,16 @@
             <v-container>
               <v-layout row wrap>
                 <v-flex xs6 sm4 md3 pr-4 pb-4>
-                 <v-img :src="artist.images[0].url" style="width: 100%;" aspect-ratio="1" class="grey lighten-2"></v-img>
+                 <v-img :src="artist.images[0].url" style="width: 100%;" aspect-ratio="1" class="black lighten-2">
+                   <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
+                      <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                    </v-layout>
+                 </v-img>
                 </v-flex>
 
                 <v-flex xs12 sm8 md9>
                   <h1 class="display-2 font-weight-black ">{{artist.name}}</h1>
-                  <div v-if="albums !== undefined">
+                  <div v-if="albums">
                     <h2>{{albums.items.length}} Albums</h2>
                   </div>
                   <p>{{artist.followers.total}} followers</p>
