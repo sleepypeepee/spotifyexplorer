@@ -7,21 +7,18 @@
           <v-card-title class="display-2 font-weight-black ">Search Artists</v-card-title>
           <v-container>
             <v-layout row wrap>
-              <v-flex xs7 sm9 md10>
+              <v-flex xs12>
                 <v-text-field
                   v-model="searchValue"
                   label="Enter artist name"
                   :rules="searchValidation"
-                  required
                   outline
+                  required
                   clearable
-                  prepend-inner-icon="search"
+                  append-icon="search"
+                  @click:append="search"
                   v-on:keyup.enter="search"
                 ></v-text-field>
-              </v-flex>
-
-              <v-flex xs5 sm3 md2>
-                <v-btn depressed large :disabled="searchDisabled" v-on:click="search">Search</v-btn>
               </v-flex>
             </v-layout>
 
@@ -41,7 +38,11 @@
                     <router-link v-for="artist in artists" :key="artist.id" :to="{ name: 'artistdetails', params: { id: artist.id } }" class="link-green">
                       <v-list-tile avatar class="list-item">
                         <v-list-tile-avatar v-if="artist.images.length > 0">
-                          <img :src="artist.images[0].url">
+                          <v-img :src="artist.images[0].url">
+                            <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
+                              <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                            </v-layout>
+                          </v-img>
                         </v-list-tile-avatar>
 
                         <v-list-tile-content>
@@ -99,9 +100,9 @@ export default {
     },
     search() {
       if (this.searchValue.length > 0) {
+        this.$store.dispatch('searchArtists', this.searchValue)
         this.searchDirty = true;
       }
-      this.$store.dispatch('searchArtists', this.searchValue)
     }
   },
   mounted() {
