@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="search">
     <Search />
   </div>
 </template>
@@ -9,7 +9,7 @@
 import Search from '@/components/Search.vue'
 
 export default {
-  name: 'home',
+  name: 'search',
   components: {
     Search
   }

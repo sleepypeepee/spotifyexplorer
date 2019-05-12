@@ -1,71 +1,44 @@
 <template>
-  <div class="artistDetails">
-    <v-container>
-      <v-layout row wrap>
-        <v-flex xs12>
+  <v-container class="artistDetails" flex>
+    <transition name="fade" mode="out-in">
+      <v-layout v-if="showArtistCard" row>
+        <v-flex pb-3>
 
           <v-card v-if="artist">
-            <v-container>
-              <v-layout row wrap>
-                <v-flex xs6 sm4 md3 pr-4 pb-4>
-                 <v-img :src="artist.images[0].url" style="width: 100%;" aspect-ratio="1" class="black lighten-2">
-                   <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
-                      <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                    </v-layout>
-                 </v-img>
-                </v-flex>
+            <v-layout row wrap>
+              <v-flex xs12 sm4 md3 lg2>
+               <v-img :src="artist.images[0].url" :aspect-ratio="$vuetify.breakpoint.xsOnly ? 2.25 : 1" position="center 30%" class="black lighten-2">
+                 <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
+                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                  </v-layout>
+               </v-img>
+              </v-flex>
 
-                <v-flex xs12 sm8 md9>
-                  <h1 class="display-2 font-weight-black ">{{artist.name}}</h1>
-                  <div v-if="albums">
-                    <h2>{{albums.items.length}} Albums</h2>
-                  </div>
-                  <p>{{artist.followers.total}} followers</p>
-                  <p><a v-bind:href="artist.external_urls.spotify" class="link-green" target="_blank">View on Spotify</a></p>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+              <v-flex xs12 sm8 md9 lg10 pa-3>
+                <h1 class="font-weight-black" :class="{'display-2': $vuetify.breakpoint.mdAndUp, 'display-1': $vuetify.breakpoint.xsAndUp}">{{artist.name}}</h1>
+                <div v-if="albums">
+                  <h2>{{albums.items.length}} Albums</h2>
+                </div>
+                <p>{{artist.followers.total}} followers</p>
+                <p class="mb-0"><a v-bind:href="artist.external_urls.spotify" class="link-green" target="_blank">View on Spotify</a></p>
 
-    <v-container>
-      <v-layout row wrap>
-        <v-flex xs12>
-
-          <v-card>
-            <v-card-title class="headline font-weight-regular">Albums</v-card-title>
-            <v-container grid-list-sm fluid>
-              <v-layout row wrap v-if="albums">
-                <v-flex v-for="album in orderBy(albums.items, 'release_date', -1)" :key="album.id" xs6 sm4 md3 lg2 d-flex pa-2 pb-4>
-
-                  <v-card flat tile class="d-flex">
-                    <router-link :to="{ name: 'albumdetails', params: { id: album.id } }" class="link-green">
-                      <v-img :src="album.images[0].url" aspect-ratio="1" class="black lighten-2">
-                        <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
-                          <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                        </v-layout>
-                      </v-img>
-                      <div class="album-image-title">
-                        <p>{{album.release_date | formatDateToYear}}</p>
-                        <h3>{{album.name}}</h3>
-                      </div>
-                    </router-link>
-                  </v-card>
-                  
-                </v-flex>
-              </v-layout>
-              <v-layout row wrap v-else>
-                <p>No albums to show.</p>
-              </v-layout>
-            </v-container>
+              </v-flex>
+            </v-layout>
           </v-card>
 
         </v-flex>
       </v-layout>
-    </v-container>
-  </div>
+    </transition>
+    <v-layout row>
+      <v-flex pb-3>
+
+        <transition name="fade" mode="out-in">
+          <router-view></router-view>
+        </transition>
+
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -80,29 +53,26 @@ export default {
     },
     albums() {      
       return this.$store.getters.ALBUMS
+    },
+    showArtistCard() {
+      return (this.$route.name == 'artistoverview' && this.$vuetify.breakpoint.mdAndDown) || this.$vuetify.breakpoint.lgAndUp ? true : false
     }
   },
   created() {
     this.fetchArtistData()
   },
   watch: {
-    '$route': 'fetchArtistData'
+    '$route': 'fetchArtistData',
+    artist() {
+      this.$root.$emit('update:title', this.artist.name)
+    }
   },
   methods: {
     fetchArtistData() {
       // TODO: Loader
       this.$store.dispatch('getArtist', this.$route.params.id)
-      this.$store.dispatch('getAlbums', this.$route.params.id)
+      this.$store.dispatch('getAlbums', [this.$route.params.id, 'album'])
     }
   }
 }
 </script>
-<style>
-.album-image-title { 
-  padding: 10px 0;
-}
-.album-image-title p { 
-  margin-bottom: 0;
-  color: #fff;
-}
-</style>

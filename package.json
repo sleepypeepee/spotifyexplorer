@@ -1,13 +1,15 @@
 {
-  "name": "spotify-app",
-  "version": "0.1.0",
+  "name": "spotify-explorer",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build:test": "vue-cli-service build --mode test",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "moment": "^2.24.0",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1",

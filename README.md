@@ -29,6 +29,28 @@ npm run serve
 ```
 Navigate to localhost:8080 in your favourite web browser.
 
+### Generate test build
+
+Using Yarn:
+```
+yarn build:test
+```
+Using Node Package Manager:
+```
+npm run build:test
+```
+
+### Generate production build
+
+Using Yarn:
+```
+yarn build
+```
+Using Node Package Manager:
+```
+npm run build
+```
+
 ## Built with
 
 * [Node.js](https://nodejs.org) - The development environment used
@@ -38,13 +60,11 @@ Navigate to localhost:8080 in your favourite web browser.
 
 ## Next release
 
-* Add IE11 polyfill for Vuetify
-* Use Axios to ensure .fetch() functionality in older browsers, such as IE11
-* Divide various components into sub-components, to separate concerns
-* Implement error handling
-* Results pagination
-* Loading spinners
-* Add functionality to play tracks from Spotify in a pop-up player
+* Play tracks in a pop-up player
+* Allow searching for albums and playlists
+* Appears On section in Artist Overview
+* IE11 polyfill for Vuetify
+* Improved error handling
 
 ## Authors
 
