@@ -1,6 +1,6 @@
 # Spotify Explorer
 
-A browser-based app to allow the user to search for Spotify artists and view their albums, created using Vue.js.
+A browser-based Spotify app, created using Vue.js.
 
 ## Live Demo
 
@@ -29,15 +29,15 @@ npm run serve
 ```
 Navigate to localhost:8080 in your favourite web browser.
 
-### Generate test build
+### Generate development build
 
 Using Yarn:
 ```
-yarn build:test
+yarn build:dev
 ```
 Using Node Package Manager:
 ```
-npm run build:test
+npm run build:dev
 ```
 
 ### Generate production build
