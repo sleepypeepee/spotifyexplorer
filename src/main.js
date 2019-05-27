@@ -31,7 +31,13 @@ Vue.filter('formatTimeElapsed', function(value) {
 })
 Vue.filter('formatDateToYear', function(value) {
 	if (value) {
-   return moment(value).format('YYYY')
+    return moment(value).format('YYYY');
+  }
+})
+Vue.filter('limitString', function(value, limit) {
+  if (value) {
+    let dots = value.length > limit ? '...' : '';
+    return value.substring(0, limit) + dots;
   }
 })
 

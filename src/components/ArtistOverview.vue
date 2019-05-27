@@ -1,6 +1,6 @@
 <template>
   <div class="artistDetails">
-  	<v-layout row>
+    <v-layout row>
       <v-flex pb-3>
 
         <h2>Albums</h2>
@@ -43,18 +43,17 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Vue2Filters from 'vue2-filters'
 
 export default {
   name: 'ArtistOverview',
   mixins: [Vue2Filters.mixin],
   computed: {
-    artist() {
-      return this.$store.getters.ARTIST_DETAILS
-    },
-    albums() {      
-      return this.$store.getters.ALBUMS
-    }
+    ...mapGetters({
+      artist: 'ARTIST_DETAILS',
+      albums: 'ALBUMS'
+    })
   }
 }
 </script>

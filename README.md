@@ -4,7 +4,7 @@ A browser-based app to allow the user to search for Spotify artists and view the
 
 ## Live Demo
 
-[Demo (robmarriott.com/spotifyexplorer)](http://www.robmarriott.com/spotifyexplorer)
+[Demo (spotifyexplorer.netlify.com)](https://spotifyexplorer.netlify.com)
 
 ## Project setup
 
@@ -60,11 +60,10 @@ npm run build
 
 ## Next release
 
-* Play tracks in a pop-up player
-* Allow searching for albums and playlists
+* Allow searching for songs, albums and playlists
 * Appears On section in Artist Overview
-* IE11 polyfill for Vuetify
-* Improved error handling
+* Music player Seek Bar and time elapsed / remaining information
+* Improved messaging and error handling
 
 ## Authors
 

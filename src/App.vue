@@ -145,7 +145,8 @@
           </section>
           <footer>
 
-            <!-- TODO: Desktop player here -->
+            <!-- TODO: Desktop player here too? -->
+            <!-- <Player /> -->
 
           </footer>
         </div>
@@ -175,14 +176,24 @@
         </template>
       </v-toolbar>
 
-      <v-content>
+      <v-content class="mb-5">
         <transition name="fade" mode="out-in">
           <router-view></router-view>
         </transition>
+
+        <v-slide-y-transition>
+          <Player />
+        </v-slide-y-transition>
       </v-content>
 
-      <!-- TODO: Fixed position media player bottom bar here -->
       <!-- <div v-if="trackPlaying" class="mediaPlayer"></div> -->
+<!--       <v-slide-y-transition>
+        <Player />
+      </v-slide-y-transition> -->
+
+     <!--  <v-bottom-nav app fixed>
+        <Player />
+      </v-bottom-nav> -->
 
       <v-bottom-nav v-if="$vuetify.breakpoint.mdAndDown" :value="true" app fixed dark>
         <v-btn color="white" flat to="/library">
@@ -206,9 +217,13 @@
 </template>
 
 <script>
+import Player from './components/Player'
 
 export default {
   name: 'App',
+  components: {
+    Player
+  },
   data() {
     return {
       miniDrawer: true,
@@ -237,7 +252,6 @@ export default {
   },
   methods: {
     authorise() {
-
       if (!this.authorised) {
 
         const hash = window.location.hash
@@ -268,11 +282,24 @@ export default {
 
         const scopes = [
           'user-library-read',
-          'playlist-read-private',
+          'user-library-modify',
           'user-top-read',
           'user-read-recently-played',
-          'user-follow-read'
+          'user-follow-read',
+          'user-follow-modify',
+          'user-read-birthdate', 
+          'user-read-email', 
+          'user-read-private',
+          'playlist-read-private',
+          'playlist-read-collaborative',
+          'playlist-modify-public',
+          'playlist-modify-private',
+          'streaming',
+          'user-read-playback-state',
+          'user-modify-playback-state',
+          'user-read-currently-playing'
         ];
+
         if (!_token) {
           window.location = `${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token&show_dialog=true`;
         }
@@ -317,13 +344,26 @@ a.link-green {
 a.link-green:hover { color: #3bf77d; }
 .spotifyGreen { color: #1ed760; }
 
+.overlay { 
+  background: rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.4);
+}
+
 .spotifyLogo { font-size: 36px; }
 
-.list-item:hover { background-color: #515151 }
+.list-item:hover, .list-item.active { background-color: #515151; color: #fff; }
+.currentTracklist .list-item:hover, .currentTracklist .list-item.active { background-color: #313131; }
+.list-item.unavailable, 
+.list-item.unavailable .v-list__tile__sub-title,
+.currentTracklist .list-item.unavailable,
+.currentTracklist .list-item.unavailable .v-list__tile__sub-title { color: #9e9e9e; }
 
 .gallery-image-title { padding: 10px 0; }
 
-.loader { height: 100px; }
+.loader { 
+  height: 100px;
+  padding: 10px;
+}
 .loader .v-progress-circular.listProgress { 
   display: block;
   margin: 0 auto;
@@ -344,6 +384,8 @@ a.link-green:hover { color: #3bf77d; }
 }
 .v-navigation-drawer .panel footer { flex-shrink: 0; }
 .v-navigation-drawer .footerIcon { font-size: 20px; }
+
+.userDrawer { z-index: 900; }
 
 /* Router transitions */
 .fade-enter-active,

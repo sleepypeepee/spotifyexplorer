@@ -8,7 +8,7 @@
       </v-flex>
     </v-layout>
     <v-layout row>
-      <v-flex pb-3>
+      <v-flex pb-4>
 
         <v-card>
           <v-text-field
@@ -24,7 +24,7 @@
           ></v-text-field>
 
           <v-slide-y-transition>
-            <v-list two-line v-if="artists.length > 0" >
+            <v-list two-line v-if="artists.length > 0">
               <v-subheader v-if="!searchDirty">
                 Your Top Artists
               </v-subheader>
@@ -36,14 +36,13 @@
               <router-link v-for="(artist, index) in artists" :key="index" :to="{ name: 'artistoverview', params: { id: artist.id } }" class="link-white">
                 <v-list-tile avatar class="list-item">
                   <v-list-tile-avatar >
-                    <!-- TODO: if artist.images.length < 1 load in a default icon of a person -->
+                    <!-- TODO: if artist.images.length < 1 load in a default person icon -->
                     <v-img v-if="artist.images.length > 0" :src="artist.images[0].url">
                       <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
                         <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
                       </v-layout>
                     </v-img>
                   </v-list-tile-avatar>
-                  
 
                   <v-list-tile-content>
                     <v-list-tile-title>
@@ -72,6 +71,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Search',
   data() {
@@ -88,9 +89,9 @@ export default {
     }
   },
   computed: {
-    fetchedArtists() {
-      return this.$store.getters.ARTISTS;
-    },
+    ...mapGetters({
+      fetchedArtists: 'ARTISTS'
+    }),
     searchDisabled() {
       return this.searchValue.length < 1 ? true : false
     }
@@ -131,38 +132,34 @@ export default {
         this.getArtists()
       }
     },
+    getDocHeight() {
+      var D = document;
+      return Math.max(
+        D.body.scrollHeight, D.documentElement.scrollHeight,
+        D.body.offsetHeight, D.documentElement.offsetHeight,
+        D.body.clientHeight, D.documentElement.clientHeight
+      );
+    },
+    getScrollTop() {
+      var D = document;
+      return Math.max(
+        window.pageYOffset, D.documentElement.scrollTop, D.body.scrollTop, 0
+      );
+    },
     lazyLoad() {
+      let scrollTop = Math.ceil(this.getScrollTop()),
+          bottomOfWindow = scrollTop + window.outerHeight >= this.getDocHeight();
 
-      function getDocHeight() {
-        var D = document;
-        return Math.max(
-          D.body.scrollHeight, D.documentElement.scrollHeight,
-          D.body.offsetHeight, D.documentElement.offsetHeight,
-          D.body.clientHeight, D.documentElement.clientHeight
-        );
-      }
-      function getScrollTop() {
-        var D = document;
-        return Math.max(
-          window.pageYOffset, D.documentElement.scrollTop, D.body.scrollTop, 0
-        );
-      }
+      if (bottomOfWindow && !this.endOfResults) {
 
-      window.onscroll = () => {
-        let scrollTop = Math.ceil(getScrollTop()),
-            bottomOfWindow = scrollTop + window.outerHeight >= getDocHeight();
-
-        if (bottomOfWindow && !this.endOfResults) {
-
-          if (this.searchDirty) {
-            // get more search results
-            this.getArtists()
-          } else {
-            // get more top artists
-            this.getTopArtists()
-          }
+        if (this.searchDirty) {
+          // get more search results
+          this.getArtists()
+        } else {
+          // get more top artists
+          this.getTopArtists()
         }
-      };
+      }
     }
   },
   created() {
@@ -170,7 +167,10 @@ export default {
     this.$root.$emit('update:title', 'Artist Search')
   },
   mounted() {
-    this.lazyLoad()
+    window.addEventListener('scroll', this.lazyLoad)
+  },
+  destroyed() {
+    window.removeEventListener('scroll', this.lazyLoad)
   }
 }
 </script>
