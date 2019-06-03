@@ -10,8 +10,7 @@
 
         <router-link v-for="album in albums" :key="album.album.id" :to="{ name: 'albumdetails', params: { id: album.album.id } }" class="link-white">
           <v-list-tile avatar class="list-item">
-            <v-list-tile-avatar>
-              <!-- TODO: if artist.images.length < 1 load in a default icon -->
+            <v-list-tile-avatar tile>
               <v-img v-if="album.album.images.length > 0" :src="album.album.images[0].url">
                 <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
                   <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>

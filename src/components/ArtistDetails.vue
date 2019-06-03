@@ -8,12 +8,11 @@
             <v-layout row wrap>
               <v-flex xs12 sm4 md3 lg2>
 
-            <!-- TODO: Placeholder image -->
-            <v-img v-if="artist.images.length > 0" :src="artist.images[0].url" :aspect-ratio="$vuetify.breakpoint.xsOnly ? 2.25 : 1" position="center 30%" class="black lighten-2">
-              <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
-                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-              </v-layout>
-            </v-img>
+                <v-img v-if="artist.images.length > 0" :src="artist.images[0].url" :aspect-ratio="$vuetify.breakpoint.xsOnly ? 2.25 : 1" position="center 30%" class="black lighten-2">
+                  <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
+                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                  </v-layout>
+                </v-img>
 
               </v-flex>
               <v-flex xs12 sm8 md9 lg10 pa-3>

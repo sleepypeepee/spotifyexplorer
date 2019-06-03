@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app dark :class="{'noScroll': !isScrollable}">
     <div v-if="authorised">
 
       <v-navigation-drawer app v-model="userNavDrawerVisible" fixed temporary right dark class="userDrawer pb-0">
@@ -104,7 +104,7 @@
             <v-list class="pt-0">
               <v-divider></v-divider>
       
-              <v-list-tile to="/library" active-class="green">
+              <v-list-tile :to="{name: 'userplaylists'}" active-class="green">
                 <v-list-tile-action>
                   <v-icon>library_music</v-icon>
                 </v-list-tile-action>
@@ -114,17 +114,17 @@
                 </v-list-tile-content>
               </v-list-tile>
 
-              <v-list-tile to="/search" active-class="green">
+              <v-list-tile :to="{name: 'usertop'}" active-class="green">
                 <v-list-tile-action>
                   <v-icon>search</v-icon>
                 </v-list-tile-action>
       
                 <v-list-tile-content>
-                  <v-list-tile-title>Artist Search</v-list-tile-title>
+                  <v-list-tile-title>Search</v-list-tile-title>
                 </v-list-tile-content>
               </v-list-tile>
 
-              <v-list-tile to="/history" active-class="green">
+              <v-list-tile :to="{name: 'history'}" active-class="green">
                 <v-list-tile-action>
                   <v-icon>history</v-icon>
                 </v-list-tile-action>
@@ -145,8 +145,7 @@
           </section>
           <footer>
 
-            <!-- TODO: Desktop player here too? -->
-            <!-- <Player /> -->
+            <!-- Footer content here -->
 
           </footer>
         </div>
@@ -176,7 +175,7 @@
         </template>
       </v-toolbar>
 
-      <v-content class="mb-5">
+      <v-content class="mb-5 pb-5">
         <transition name="fade" mode="out-in">
           <router-view></router-view>
         </transition>
@@ -228,7 +227,8 @@ export default {
     return {
       miniDrawer: true,
       userNavDrawerVisible: false,
-      title: ''
+      title: '',
+      isScrollable: true
     }
   },
   computed: {
@@ -305,7 +305,7 @@ export default {
         }
         this.$store.dispatch('setToken', _token)
 
-        this.$router.push('/')
+        this.$router.push({name: 'userplaylists'})
       }
     },
     toggleUserNavDrawer() {
@@ -322,6 +322,9 @@ export default {
   created() {
     this.$root.$on('update:title', data => {
       this.title = data
+    });
+    this.$root.$on('update:scrollable', data => {
+      this.isScrollable = data
     });
   },
   mounted() {
@@ -348,8 +351,16 @@ a.link-green:hover { color: #3bf77d; }
   background: rgb(0, 0, 0);
   background: rgba(0, 0, 0, 0.4);
 }
+.noScroll {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+}
 
 .spotifyLogo { font-size: 36px; }
+
+.avatar { border-radius: 50%; }
 
 .list-item:hover, .list-item.active { background-color: #515151; color: #fff; }
 .currentTracklist .list-item:hover, .currentTracklist .list-item.active { background-color: #313131; }

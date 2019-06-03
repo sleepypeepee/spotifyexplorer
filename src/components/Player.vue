@@ -54,7 +54,7 @@
 			
 			<div class="trackInfo">
 				<v-fade-transition>
-					<v-layout v-if="currentTrack" row wrap align-center>
+					<v-layout v-if="currentTrack" row align-center>
 						<v-flex xs3>
 							
 							<router-link :to="{ name: 'albumdetails', params: { id: albumId } }" class="link-white">
@@ -75,7 +75,7 @@
 								</router-link>
 							</div>
 							<div class="caption">
-								<router-link :to="{ name: 'artistoverview', params: { id: artistId } }" class="link-white">
+								<router-link :to="{ name: 'artistdetails', params: { id: artistId } }" class="link-white">
 									<span @click="closePlaylist">{{currentTrack.artists[0].name | limitString(50)}}</span>
 								</router-link>
 							</div>
@@ -121,7 +121,7 @@
             <v-icon>devices</v-icon>
           </v-btn>
         </template>
-        <v-list v-if="devices.length > 0">
+        <v-list v-if="devices.length > 0 && activeDevice">
           <v-list-tile v-for="(device, i) in devices" :key="i" @click="transferPlayback(device.id)" :class="{'green': device.id === activeDevice.id}">
             <v-list-tile-title>{{ device.name }}</v-list-tile-title>
           </v-list-tile>
@@ -164,10 +164,10 @@ export default {
 			let trackId = ''
 
       if (this.currentTrack) {
-        if (this.currentTrack.linked_from.id !== null) {
-          trackId = this.currentTrack.linked_from.id
-        } else {
+        if (this.currentTrackid !== null) {
           trackId = this.currentTrack.id
+        } else {
+          trackId = this.currentTrack.linked_from.id
         }
       }
       return trackId
@@ -201,6 +201,14 @@ export default {
 		},
 		fetchedDevices() {
 			this.devices = this.fetchedDevices
+		},
+		playlistVisible() {
+			setTimeout(()=> {
+				this.scrollToActiveItem()
+			}, 10)
+		},
+		activeDevice() {
+			this.controlsDisabled = this.deviceId == this.activeDevice.id ? false: true
 		}
   },
 	methods: {
@@ -235,6 +243,7 @@ export default {
 				if (state !== null) {
 					// console.log('state not null: ', state)
 					if (state.context.uri !== null) {
+						// console.log('state.context.uri: ', state.context.uri)
 						this.$store.dispatch('getCurrentTracks', state.context.uri)
 					}
 					this.isPlaying = state.paused ? false : true
@@ -243,6 +252,7 @@ export default {
 					this.albumId = state.track_window.current_track.album.uri.split(':').pop()
 					this.artistId = state.track_window.current_track.artists[0].uri.split(':').pop()
 					this.controlsDisabled = false
+					this.scrollToActiveItem()
 				}
 				this.$store.dispatch('getDevices')
       })
@@ -250,7 +260,6 @@ export default {
       sdk.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID: ', device_id)
         this.deviceId = device_id
-        // Store device_id in vuex store
         this.$store.dispatch('setDeviceId', device_id)
         this.$store.dispatch('setActiveDevice', {id: device_id})
       })
@@ -296,6 +305,7 @@ export default {
     },
     togglePlaylist() {
 			this.playlistVisible = !this.playlistVisible
+			this.$root.$emit('update:scrollable', !this.playlistVisible)
     },
     closePlaylist() {
 			this.playlistVisible = false
@@ -303,8 +313,14 @@ export default {
     playTrack(index) {
 			this.$store.dispatch('playContextTrack', index)
     },
+    scrollToActiveItem() {
+			let activeElmnt = document.querySelector('div.currentTracklist .active')
+			if (activeElmnt) {
+				activeElmnt.scrollIntoView()
+			}
+    },
 		transferPlayback(id) {
-			this.$store.dispatch('transferPlayback', id).then(response => {
+			this.$store.dispatch('transferPlayback', id).then(() => {
 					this.$store.dispatch('getDevices')
 				}, error => {
 					alert('Error transferring playback to device: ' + error)

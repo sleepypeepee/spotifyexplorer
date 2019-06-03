@@ -10,7 +10,7 @@
 
         <router-link v-for="playlist in playlists" :key="playlist.id" :to="{ name: 'playlistdetails', params: { id: playlist.id } }" class="link-white">
           <v-list-tile avatar class="list-item">
-            <v-list-tile-avatar >
+            <v-list-tile-avatar tile>
               <!-- TODO: if artist.images.length < 1 load in a default icon -->
               <v-img v-if="playlist.images.length > 0" :src="playlist.images[0].url">
                 <v-layout slot="placeholder" fill-height align-center justify-center ma-0>

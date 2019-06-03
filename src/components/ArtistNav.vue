@@ -1,10 +1,10 @@
 <template>
   <v-tabs v-model="activeTab" :align-with-title="$vuetify.breakpoint.lgAndUp" :color="colorProp">
     <v-tabs-slider :color="sliderColor"></v-tabs-slider>
-    <v-tab to="artistoverview">
+    <v-tab :to="{name: 'artistoverview'}">
       Overview
     </v-tab>
-    <v-tab to="artistabout">
+    <v-tab :to="{name: 'artistabout'}">
       About
     </v-tab>
   </v-tabs>

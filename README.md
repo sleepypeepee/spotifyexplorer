@@ -1,6 +1,6 @@
 # Spotify Explorer
 
-A browser-based Spotify app, created using Vue.js.
+A Vue.js web app that utilises Spotify's open music API.
 
 ## Live Demo
 
@@ -60,8 +60,7 @@ npm run build
 
 ## Next release
 
-* Allow searching for songs, albums and playlists
-* Appears On section in Artist Overview
+* Artist Appears On section
 * Music player Seek Bar and time elapsed / remaining information
 * Improved messaging and error handling
 

@@ -7,13 +7,10 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'root',
-      redirect: 'library/userplaylists'
+      name: 'root'
     },
     {
       path: '/library',
-      name: 'library',
-      redirect: 'library/userplaylists',
       components: {
         default: () => import('./views/Library.vue'),
         navigation: () => import('./components/LibraryNav.vue')
@@ -24,7 +21,7 @@ export default new Router({
       },
       children: [
         {
-          path: 'userplaylists', 
+          path: '/', 
           name: 'userplaylists', 
           components: {
             default: () => import('./components/UserPlaylists.vue')
@@ -60,12 +57,91 @@ export default new Router({
     },
     {
       path: '/search',
-      name: 'search',
       component: () => import('./views/Search.vue'),
       meta: {
         subView: false,
         tabView: false
-      }
+      },
+      children: [
+        {
+          path: '/', 
+          name: 'usertop', 
+          components: {
+            default: () => import('./components/UserTop.vue')
+          },
+          meta: {
+            subView: false,
+            tabView: false
+          }
+        },
+        {
+          path: 'results', 
+          name: 'results', 
+          components: {
+            default: () => import('./components/Results.vue')
+          },
+          meta: {
+            subView: false,
+            tabView: false
+          }
+        },
+        {
+          path: 'songresults', 
+          name: 'songresults', 
+          components: {
+            default: () => import('./components/SongResults.vue')
+          },
+          meta: {
+            subView: false,
+            tabView: false
+          }
+        },
+        {
+          path: 'artistresults', 
+          name: 'artistresults', 
+          components: {
+            default: () => import('./components/ArtistResults.vue')
+          },
+          meta: {
+            subView: false,
+            tabView: false
+          }
+        },
+        {
+          path: 'albumresults', 
+          name: 'albumresults', 
+          components: {
+            default: () => import('./components/AlbumResults.vue')
+          },
+          meta: {
+            subView: false,
+            tabView: false
+          }
+        },
+        {
+          path: 'playlistresults', 
+          name: 'playlistresults', 
+          components: {
+            default: () => import('./components/PlaylistResults.vue')
+          },
+          meta: {
+            subView: false,
+            tabView: false
+          }
+        },
+        {
+          path: 'allresults', 
+          name: 'allresults', 
+          components: {
+            default: () => import('./components/ResultsPanel.vue')
+          },
+          props: true,
+          meta: {
+            subView: false,
+            tabView: false
+          }
+        }
+      ]
     },
     {
       path: '/history',
@@ -79,6 +155,7 @@ export default new Router({
     {
       path: '/artistdetails/:id',
       name: 'artistdetails',
+      redirect: '/artistdetails/:id/artistoverview',
       components: {
         default: () => import('./views/ArtistDetails.vue'),
         navigation: () => import('./components/ArtistNav.vue')
@@ -127,7 +204,7 @@ export default new Router({
       }
     }
   ],
-  scrollBehavior (to, from, savedPosition) {
+  scrollBehavior() {
     return { x: 0, y: 0 };
   }
 })

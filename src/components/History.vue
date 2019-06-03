@@ -92,13 +92,13 @@ export default {
       return id
     },
     allTrackUris() {
-      if (Array.isArray(this.tracks)) {
-        let uris = [];
+      let uris = [];
+      if (this.tracks.length > 0) {
         for (var i = 0; i < this.tracks.length; i++) {
           uris.push(this.tracks[i].track.uri)
         }
-        return uris
       }
+      return uris
     }
   },
   watch: {

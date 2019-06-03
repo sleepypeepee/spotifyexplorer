@@ -8,7 +8,7 @@
         </v-subheader>
         <v-divider></v-divider>
 
-        <router-link v-for="artist in orderBy(artists, 'name')" :key="artist.id" :to="{ name: 'artistoverview', params: { id: artist.id } }" class="link-white">
+        <router-link v-for="artist in orderBy(artists, 'name')" :key="artist.id" :to="{ name: 'artistdetails', params: { id: artist.id } }" class="link-white">
           <v-list-tile avatar class="list-item">
             <v-list-tile-avatar >
               <!-- TODO: if artist.images.length < 1 load in a default icon -->

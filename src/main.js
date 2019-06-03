@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import store from './store'
 import router from './router'
-import axios from 'axios'
 import './plugins/vuetify'
 import moment from 'moment'
 import Vue2Filters from 'vue2-filters'

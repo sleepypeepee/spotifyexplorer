@@ -6,11 +6,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    clientId: 'e171f92e4bda4c47a8db296711413a4d', // Do I need this anymore?
+    clientId: 'e171f92e4bda4c47a8db296711413a4d',
     authorised: false,
     token: null,
     deviceId: null,
-    artists: [],
+    topTracks: null,
+    topArtists: null,
+    searchResults: null,
     artist: null,
     albums: null,
     album: null,
@@ -30,7 +32,9 @@ export default new Vuex.Store({
   },
   getters: {
     ACCESS_TOKEN: state => state.token,
-    ARTISTS: state => state.artists,
+    TOP_TRACKS: state => state.topTracks,
+    TOP_ARTISTS: state => state.topArtists,
+    SEARCH_RESULTS: state => state.searchResults,
     ARTIST_DETAILS: state => state.artist,
     ALBUMS: state => state.albums,
     ALBUM: state => state.album,
@@ -60,8 +64,14 @@ export default new Vuex.Store({
     SET_DEVICE_ID(state, id) {
       state.deviceId = id
     },
-    SET_ARTISTS(state, payload) {
-      state.artists = payload
+    SET_TOP_TRACKS(state, payload) {
+      state.topTracks = payload
+    },
+    SET_TOP_ARTISTS(state, payload) {
+      state.topArtists = payload
+    },
+    SET_SEARCH_RESULTS(state, payload) {
+      state.searchResults = payload
     },
     SET_ARTIST(state, payload) {
       state.artist = payload
@@ -124,37 +134,37 @@ export default new Vuex.Store({
     setDeviceId(context, id) {
       context.commit('SET_DEVICE_ID', id)
     },
-    getTopArtists(context, offset) {
+    getUserTop(context, type) {
+      if (type !== null) {
 
-      var offsetAmt = offset === undefined ? 0 : offset;
+        let mutationType = type === 'tracks' ? 'SET_TOP_TRACKS' : 'SET_TOP_ARTISTS'
 
-      axios.get('https://api.spotify.com/v1/me/top/artists?limit=20&offset=' + offsetAmt, {
-        headers: {
-          Authorization: 'Bearer ' + this.state.token
-        }
-      })
-      .then((res) => {        
-        var artists = res.data;
-        context.commit('SET_ARTISTS', artists)
-      })
-      .catch(err => {
-        // TODO: Error handling
-        alert('STORE ERROR: ' + err)
-      });
+        axios.get('https://api.spotify.com/v1/me/top/' + type + '?limit=20', {
+          headers: {
+            Authorization: 'Bearer ' + this.state.token
+          }
+        })
+        .then((res) => {
+          context.commit(mutationType, res.data)
+        })
+        .catch(err => {
+          // TODO: Error handling
+          alert('STORE ERROR: ' + err)
+        });
+      }
     },
-    searchArtists(context, [value, offset]) {
+    search(context, [value, type, offset]) {
 
       var offsetAmt = offset === undefined ? 0 : offset;
-      context.commit('SET_SEARCH_TERM', value)
+      context.commit('SET_SEARCH_TERM', value) // TODO: Use a getter in Search.vue to maintain last entered search term
 
-      axios.get('https://api.spotify.com/v1/search?q=' + value + '&type=artist&offset=' + offsetAmt, {
+      axios.get('https://api.spotify.com/v1/search?q=' + value + '&type=' + type + '&limit=50&market=' + this.state.user.country + '&offset=' + offsetAmt, {
         headers: {
           'Authorization': 'Bearer ' + this.state.token
         }
       })
       .then((res) => {
-        var artists = res.data.artists;
-        context.commit('SET_ARTISTS', artists)
+        context.commit('SET_SEARCH_RESULTS', res.data)
       })
       .catch(function(err) {
         // TODO: Error handling
@@ -179,7 +189,7 @@ export default new Vuex.Store({
     },
     getAlbums(context, [id, groups]) {
 
-      axios.get('https://api.spotify.com/v1/artists/' + id + '/albums?q=&include_groups=' + groups + '&country=' + this.state.user.country, {
+      axios.get('https://api.spotify.com/v1/artists/' + id + '/albums?limit=50&include_groups=' + groups + '&country=' + this.state.user.country, {
         headers: {
           'Authorization': 'Bearer ' + this.state.token
         }
@@ -383,7 +393,7 @@ export default new Vuex.Store({
       {
         headers: { 'Authorization': 'Bearer ' + this.state.token }
       })
-      .then((res) => {
+      .then(() => {
       })
       .catch(function(err) {
         // TODO: Error handling
@@ -398,9 +408,9 @@ export default new Vuex.Store({
     },
     getCurrentTracks(context, contextUri) {
 
-      let type = contextUri.split(':')[1],
+      let type = contextUri.split(':')[1] == 'user' ? contextUri.split(':')[3] : contextUri.split(':')[1],
           id = contextUri.split(':').pop(),
-          url ='https://api.spotify.com/v1/' + type + 's/' + id + '/tracks?market=' + this.state.user.country;
+          url ='https://api.spotify.com/v1/' + type + 's/' + id + '/tracks?limit=50&market=' + this.state.user.country;
 
       axios.get(url, {
         headers: {
@@ -412,10 +422,12 @@ export default new Vuex.Store({
             uri = {'context_uri': contextUri};
 
         if (type == 'playlist') {
+
           for (var i = 0; i < res.data.items.length; i++) {
             tracks.push(res.data.items[i].track);
           }
         } else {
+
           tracks = res.data.items;
         }
         context.commit('SET_CURRENT_TRACKS', tracks)
@@ -433,7 +445,7 @@ export default new Vuex.Store({
           'Authorization': 'Bearer ' + this.state.token
         }
       })
-      .then((res) => {
+      .then(() => {
       })
       .catch(function(err) {
         // TODO: Error handling
@@ -447,7 +459,7 @@ export default new Vuex.Store({
           'Authorization': 'Bearer ' + this.state.token
         }
       })
-      .then((res) => {
+      .then(() => {
       })
       .catch(function(err) {
         // TODO: Error handling

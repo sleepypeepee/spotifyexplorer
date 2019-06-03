@@ -10,14 +10,14 @@
               <v-hover>
                 <a slot-scope="{ hover }" @click="playTrack(0)">
                   <v-img v-if="playlist.images.length > 0" :src="playlist.images[0].url" :aspect-ratio="$vuetify.breakpoint.xsOnly ? 2.25 : 1" class="black lighten-2">
-                  <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
-                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                  </v-layout>
-                  <v-fade-transition>
-                    <v-layout v-if="hover" fill-height align-center justify-center ma-0 class="overlay">
-                      <v-icon size="90">play_circle_outline</v-icon>
+                    <v-layout slot="placeholder" fill-height align-center justify-center ma-0>
+                      <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
                     </v-layout>
-                  </v-fade-transition>
+                    <v-fade-transition>
+                      <v-layout v-if="hover" fill-height align-center justify-center ma-0 class="overlay">
+                        <v-icon size="90">play_circle_outline</v-icon>
+                      </v-layout>
+                    </v-fade-transition>
                   </v-img>
                 </a>
               </v-hover>
@@ -47,8 +47,8 @@
             <v-card-title><h2>Tracklist</h2></v-card-title>
             <v-list two-line>
               
-            <div v-for="(track, index) in tracks">
-              <a v-if="track.track.is_playable" @click="playTrack(index)" :key="track.id" class="link-white">
+            <div v-for="(track, index) in tracks" :key="index">
+              <a v-if="track.track.is_playable" @click="playTrack(index)" class="link-white">
                 <v-hover>
                   <v-list-tile slot-scope="{ hover }" avatar class="list-item" :class="{'active': track.track.id == currentTrackId}">
                     <v-list-tile-action >
@@ -130,10 +130,10 @@ export default {
     currentTrackId() {
       let id = ''
       if (this.currentTrack) {
-        if (this.currentTrack.linked_from.id !== null) {
-          id = this.currentTrack.linked_from.id
-        } else {
+        if (this.currentTrack.id !== null) {
           id = this.currentTrack.id
+        } else {
+          id = this.currentTrack.linked_from.id
         }
       }
       return id

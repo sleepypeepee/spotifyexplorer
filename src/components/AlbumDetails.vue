@@ -27,7 +27,7 @@
 
               <h1 class="font-weight-black" :class="{'display-2': $vuetify.breakpoint.mdAndUp, 'display-1': $vuetify.breakpoint.xsAndUp}">{{album.name}}</h1>
               <div v-if="album.artists.length > 0">
-                <router-link v-if="!isVariousArtists" :to="{ name: 'artistoverview', params: { id: album.artists[0].id } }" class="link-green">
+                <router-link v-if="!isVariousArtists" :to="{ name: 'artistdetails', params: { id: album.artists[0].id } }" class="link-green">
                   <h2>{{album.artists[0].name}}</h2>
                 </router-link>
                 <h2 v-else>{{album.artists[0].name}}</h2>
@@ -50,16 +50,16 @@
       <v-flex pb-4>
 
         <v-slide-y-transition>
-          <v-card v-if="tracks && numDiscs > 0">
+          <v-card v-if="tracks.length > 0 && numDiscs > 0">
             <v-card-title><h2>Tracklist</h2></v-card-title>
-            <v-list v-for="index in numDiscs" :key="index" two-line>
+            <v-list v-for="i in numDiscs" :key="i" two-line>
               
               <v-subheader v-if="numDiscs > 1">
-                Disc {{index}}
+                Disc {{i}}
               </v-subheader>
               
-              <div v-for="(track, index) in filterBy(tracks.items, index, 'disc_number')">
-                <a v-if="track.is_playable" @click="playTrack(index)" :key="track.id" class="link-white">
+              <div v-for="track in filterBy(tracks, i, 'disc_number')" :key="track.trackIndex">
+                <a v-if="track.is_playable" @click="playTrack(track.trackIndex)" class="link-white">
                   <v-hover>
                     <v-list-tile slot-scope="{ hover }" avatar class="list-item" :class="{'active': track.id == currentTrackId}">
                       <v-list-tile-action>
@@ -81,23 +81,25 @@
 
                   <v-divider></v-divider>
                 </a>
-                <v-list-tile v-else avatar class="list-item unavailable">
-                  <v-list-tile-action>
-                    <v-icon color="grey">music_note</v-icon>
-                  </v-list-tile-action>
+                <div v-else>
+                  <v-list-tile avatar class="list-item unavailable">
+                    <v-list-tile-action>
+                      <v-icon color="grey">music_note</v-icon>
+                    </v-list-tile-action>
 
-                  <v-list-tile-content>
-                    <v-list-tile-title>
-                      {{track.track_number}}. {{track.name}}
-                      <span class="right">{{track.duration_ms | formatTime}}</span>
-                    </v-list-tile-title>
-                    <v-list-tile-sub-title>
-                      {{track.artists[0].name}}
-                    </v-list-tile-sub-title>
-                  </v-list-tile-content>
-                </v-list-tile>
+                    <v-list-tile-content>
+                      <v-list-tile-title>
+                        {{track.track_number}}. {{track.name}}
+                        <span class="right">{{track.duration_ms | formatTime}}</span>
+                      </v-list-tile-title>
+                      <v-list-tile-sub-title>
+                        {{track.artists[0].name}}
+                      </v-list-tile-sub-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
 
-                <v-divider></v-divider>
+                  <v-divider></v-divider>
+                </div>
               </div>
 
             </v-list>
@@ -120,7 +122,6 @@ export default {
   data() {
     return {
       album: null,
-      tracks: null,
       isFavAlbum: false
     }
   },
@@ -129,6 +130,16 @@ export default {
       fetchedAlbum: 'ALBUM',
       currentTrack: 'CURRENT_TRACK'
     }),
+    tracks() {
+      let tracks = []
+      if (this.fetchedAlbum) {
+        tracks = this.fetchedAlbum.tracks.items
+        for (var i = 0; i < tracks.length; i++) {
+          tracks[i].trackIndex = i
+        }
+      }
+      return tracks
+    },
     currentTrackId () {
       let id = ''
       if (this.currentTrack) {
@@ -141,18 +152,18 @@ export default {
       return id
     },
     totalAlbumLength() {
-      let total = 0;
+      let total = 0
       for (var i = 0; i < this.fetchedAlbum.tracks.items.length; i++) {
-        total = total + this.fetchedAlbum.tracks.items[i].duration_ms;
+        total = total + this.fetchedAlbum.tracks.items[i].duration_ms
       }
       return total
     },
     numDiscs() {
-      let number = 0;
+      let number = 0
       if (Array.isArray(this.fetchedAlbum.tracks.items)) {
         for (var i = 0; i < this.fetchedAlbum.tracks.items.length; i++) {
           if (this.fetchedAlbum.tracks.items[i].disc_number > number) {
-            number = this.fetchedAlbum.tracks.items[i].disc_number;
+            number = this.fetchedAlbum.tracks.items[i].disc_number
           }
         }
       }
@@ -170,13 +181,11 @@ export default {
     '$route': 'fetchAlbumData',
     fetchedAlbum() {
       this.album = this.fetchedAlbum
-      this.tracks = this.fetchedAlbum.tracks
       this.$root.$emit('update:title', this.album.name)
     }
   },
   methods: {
     fetchAlbumData() {
-      // TODO: Loader
       this.$store.dispatch('getAlbum', this.$route.params.id)
     },
     playTrack(offset) {
